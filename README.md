@@ -7,6 +7,7 @@ Repositório de exemplo para as atividades da disciplina de Engenharia de Softwa
 - [Sobre o Projeto](#sobre-o-projeto)
 - [Como clonar ou baixar](#como-clonar-ou-baixar)
 - [Estrutura do Projeto](#estrutura-do-projeto)
+- [Documentação](#documentação)
 - [Licença](#licença)
 
 ## Sobre o Projeto
@@ -58,13 +59,21 @@ Isso criará uma cópia local do repositório em sua máquina.
 ChampSched/
 ├── LICENSE
 ├── README.md
+├── docs/
+│   └── relatorio-principios-projeto.md
 └── user_stories.md
 ```
 
 - LICENSE: termos da licença do projeto (MIT).
 - README.md: este arquivo de apresentação.
+- docs/: documentação adicional do projeto.
+- docs/relatorio-principios-projeto.md: relatório sobre princípios de projeto (SOLID, GRASP, etc.) e aplicação ao ChampSched.
 - user_stories.md: Estórias de usuários para serem implementadas
 
 ## Licença
 
 Este projeto está licenciado sob a **Licença MIT**. Veja o arquivo `LICENSE` para mais detalhes.
+
+## Documentação
+
+- Relatório de Princípios de Projeto: [docs/relatorio-principios-projeto.md](docs/relatorio-principios-projeto.md)
