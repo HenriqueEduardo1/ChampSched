@@ -1,0 +1,59 @@
+package com.champsched.service;
+
+import com.champsched.dto.UserRequestDTO;
+import com.champsched.dto.UserResponseDTO;
+import com.champsched.model.User;
+import com.champsched.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+@Service
+@RequiredArgsConstructor
+public class UserService {
+
+    private final UserRepository userRepository;
+
+    @Transactional
+    public UserResponseDTO createUser(UserRequestDTO request) {
+        User user = new User();
+        
+        user.setNome(request.getNome());
+        user.setContato(request.getContato());
+        
+        User savedUser = userRepository.save(user);
+
+        return new UserResponseDTO(savedUser);
+    }
+    
+    public UserResponseDTO getUserById(int id) {
+        UserResponseDTO user = userRepository.findById(id);
+
+        if (user == null) {
+            throw new RuntimeException("Usuário não encontrado com ID: " + id);
+        }
+
+        return user;
+    }
+    
+    @Transactional
+    public UserResponseDTO updateUser(int id, UserRequestDTO request) {
+        User user = userRepository.findUserById(id)
+        .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + id));
+
+        user.setNome(request.getNome());
+        user.setContato(request.getContato());
+        
+        User updatedUser = userRepository.save(user);
+
+        return new UserResponseDTO(updatedUser);
+    }
+
+    @Transactional
+    public void deleteUser(int id) {
+        User user = userRepository.findUserById(id)
+        .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + id));
+
+        userRepository.delete(user);
+    }
+}
