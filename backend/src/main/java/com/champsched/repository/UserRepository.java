@@ -16,5 +16,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
     UserResponseDTO findById(@Param("id") Integer id);
 
     Optional<User> findUserById(Integer id);
-
 }
