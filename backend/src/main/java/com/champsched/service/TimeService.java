@@ -28,7 +28,7 @@ public class TimeService {
         
         if (request.getIntegrantesIds() != null) {
             List<User> integrantes = request.getIntegrantesIds().stream()
-                .map(id -> userRepository.findById(id)
+                .map(id -> userRepository.findUserById(id)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + id)))
                 .collect(Collectors.toList());
                 
@@ -63,7 +63,7 @@ public class TimeService {
         
         if (request.getIntegrantesIds() != null) {
             List<User> integrantes = request.getIntegrantesIds().stream()
-                .map(userId -> userRepository.findById(userId)
+                .map(userId -> userRepository.findUserById(userId)
                     .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + userId)))
                 .collect(Collectors.toList());
 
@@ -88,7 +88,7 @@ public class TimeService {
         Time time = timeRepository.findById(timeId)
                 .orElseThrow(() -> new RuntimeException("Time não encontrado com ID: " + timeId));
         
-        User user = userRepository.findById(userId)
+        User user = userRepository.findUserById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + userId));
         
         if (!time.getIntegrantes().contains(user)) {
@@ -105,7 +105,7 @@ public class TimeService {
         Time time = timeRepository.findById(timeId)
                 .orElseThrow(() -> new RuntimeException("Time não encontrado com ID: " + timeId));
         
-        User user = userRepository.findById(userId)
+        User user = userRepository.findUserById(userId)
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + userId));
         
         time.getIntegrantes().remove(user);
