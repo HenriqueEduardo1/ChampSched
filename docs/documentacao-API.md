@@ -391,13 +391,13 @@ Cria um novo campeonato com organizador e times participantes.
             "id": 1,
             "nome": "Os Vencedores",
             "contato": "osvencedores@email.com",
-            "integrantes": [...]
+            "integrantesIds": [1, 2, 3]
         },
         {
             "id": 2,
             "nome": "Campeões FC",
             "contato": "campeoes@email.com",
-            "integrantes": [...]
+            "integrantesIds": [4, 5]
         }
     ]
 }
@@ -425,7 +425,14 @@ Retorna os dados completos de um campeonato.
         "nome": "João Silva",
         "contato": "joao.silva@email.com"
     },
-    "times": [...]
+    "times": [
+        {
+            "id": 1,
+            "nome": "Os Vencedores",
+            "contato": "osvencedores@email.com",
+            "integrantesIds": [1, 2, 3]
+        }
+    ]
 }
 ```
 
@@ -445,7 +452,14 @@ Retorna uma lista com todos os campeonatos cadastrados.
         "esporte": "Futebol",
         "data": "2025-12-15",
         "organizador": {...},
-        "times": [...]
+        "times": [
+            {
+                "id": 1,
+                "nome": "Os Vencedores",
+                "contato": "osvencedores@email.com",
+                "integrantesIds": [1, 2, 3]
+            }
+        ]
     },
     {
         "id": 2,
@@ -453,7 +467,14 @@ Retorna uma lista com todos os campeonatos cadastrados.
         "esporte": "Basquete",
         "data": "2025-11-20",
         "organizador": {...},
-        "times": [...]
+        "times": [
+            {
+                "id": 2,
+                "nome": "Campeões FC",
+                "contato": "campeoes@email.com",
+                "integrantesIds": [4, 5]
+            }
+        ]
     }
 ]
 ```
@@ -487,7 +508,14 @@ Atualiza os dados de um campeonato existente.
     "esporte": "Futsal",
     "data": "2025-12-20",
     "organizador": {...},
-    "times": [...]
+    "times": [
+        {
+            "id": 1,
+            "nome": "Os Vencedores",
+            "contato": "osvencedores@email.com",
+            "integrantesIds": [1, 2, 3]
+        }
+    ]
 }
 ```
 
@@ -525,12 +553,17 @@ Adiciona um time a um campeonato existente.
     "data": "2025-12-15",
     "organizador": {...},
     "times": [
-        {...},
+        {
+            "id": 1,
+            "nome": "Os Vencedores",
+            "contato": "osvencedores@email.com",
+            "integrantesIds": [1, 2, 3]
+        },
         {
             "id": 5,
             "nome": "Novo Time",
             "contato": "novotime@email.com",
-            "integrantes": [...]
+            "integrantesIds": [7, 8]
         }
     ]
 }
@@ -557,8 +590,17 @@ Remove um time de um campeonato.
     "esporte": "Futebol",
     "data": "2025-12-15",
     "organizador": {...},
-    "times": [...]
+    "times": [
+        {
+            "id": 1,
+            "nome": "Os Vencedores",
+            "contato": "osvencedores@email.com",
+            "integrantesIds": [1, 2, 3]
+        }
+    ]
 }
 ```
 
 **Observação:** O time não é deletado, apenas removido do campeonato.
+
+---
