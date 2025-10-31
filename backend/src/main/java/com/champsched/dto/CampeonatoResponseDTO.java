@@ -15,18 +15,18 @@ public class CampeonatoResponseDTO {
     private String esporte;
     private LocalDate data;
     private UserResponseDTO organizador;
-    private List<TimeResponseDTO> times;
+    private List<TimeCampeonatoResponseDTO> times;
     
     public CampeonatoResponseDTO(Campeonato campeonato) {
-
+        
         this.id = campeonato.getId();
         this.nome = campeonato.getNome();
         this.esporte = campeonato.getEsporte();
         this.data = campeonato.getData();
         this.organizador = new UserResponseDTO(campeonato.getOrganizador());
         this.times = campeonato.getTimes().stream()
-                .map(TimeResponseDTO::new)
-                .collect(Collectors.toList());
-
+            .map(TimeCampeonatoResponseDTO::new)
+            .collect(Collectors.toList());
+            
     }
 }
