@@ -6,6 +6,6 @@ import org.springframework.stereotype.Repository;
 
 
 @Repository
-public interface CampeonatoRepository extends JpaRepository<Campeonato, Long> {
+public interface CampeonatoRepository extends JpaRepository<Campeonato, Integer> {
     
 }

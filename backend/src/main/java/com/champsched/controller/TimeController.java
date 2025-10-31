@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/times")
+@RequestMapping("/api/times")
 @RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 public class TimeController {
