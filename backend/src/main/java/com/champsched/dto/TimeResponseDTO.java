@@ -12,16 +12,15 @@ public class TimeResponseDTO {
     private int id;
     private String nome;
     private String contato;
-    private List<Integer> integrantesIds;
+    private List<UserResponseDTO> integrantes;
     
     public TimeResponseDTO(Time time) {
         this.id = time.getId();
         this.nome = time.getNome();
         this.contato = time.getContato();
-
-        this.integrantesIds = time.getIntegrantes() != null 
+        this.integrantes = time.getIntegrantes() != null
             ? time.getIntegrantes().stream()
-                .map(user -> user.getId())
+                .map(UserResponseDTO::new)
                 .collect(Collectors.toList())
             : List.of();
     }
