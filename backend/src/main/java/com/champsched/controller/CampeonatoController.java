@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/campeonatos")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class CampeonatoController {
 
     private final CampeonatoService campeonatoService;
