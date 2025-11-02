@@ -25,6 +25,8 @@ Gerenciamento de usuários do sistema. Usuários podem ser participantes de time
 | POST | `/api/users` | Criar novo usuário |
 | GET | `/api/users` | Listar todos os usuários |
 | GET | `/api/users/{id}` | Buscar usuário por ID |
+| GET | `/api/users/{id}/times` | Listar times do usuário |
+| GET | `/api/users/{id}/campeonatos` | Listar campeonatos do usuário |
 | PUT | `/api/users/{id}` | Atualizar usuário |
 | DELETE | `/api/users/{id}` | Deletar usuário |
 
@@ -100,7 +102,75 @@ Retorna os dados de um usuário específico.
 
 ---
 
-### 4. Atualizar Usuário
+### 4. Listar Times do Usuário
+**GET** `/api/users/{id}/times`
+
+Retorna todos os times que o usuário participa como integrante.
+
+**Parâmetros:**
+- `id` (path): ID do usuário
+
+**Response:** `200 OK`
+```json
+[
+    {
+        "id": 1,
+        "nome": "Os Vencedores",
+        "contato": "osvencedores@email.com",
+        "integrantes": [
+            {
+                "id": 1,
+                "nome": "João Silva",
+                "contato": "joao.silva@email.com"
+            },
+            {
+                "id": 2,
+                "nome": "Maria Santos",
+                "contato": "maria.santos@email.com"
+            }
+        ]
+    }
+]
+```
+
+---
+
+### 5. Listar Campeonatos do Usuário
+**GET** `/api/users/{id}/campeonatos`
+
+Retorna todos os campeonatos que o usuário está participando (através dos times).
+
+**Parâmetros:**
+- `id` (path): ID do usuário
+
+**Response:** `200 OK`
+```json
+[
+    {
+        "id": 1,
+        "nome": "Copa ChampSched 2025",
+        "esporte": "Futebol",
+        "data": "2025-12-15",
+        "organizador": {
+            "id": 3,
+            "nome": "Carlos Organizador",
+            "contato": "carlos@email.com"
+        },
+        "times": [
+            {
+                "id": 1,
+                "nome": "Os Vencedores",
+                "contato": "osvencedores@email.com",
+                "integrantesIds": [1, 2]
+            }
+        ]
+    }
+]
+```
+
+---
+
+### 6. Atualizar Usuário
 **PUT** `/api/users/{id}`
 
 Atualiza os dados de um usuário existente.
@@ -127,7 +197,7 @@ Atualiza os dados de um usuário existente.
 
 ---
 
-### 5. Deletar Usuário
+### 7. Deletar Usuário
 **DELETE** `/api/users/{id}`
 
 Remove um usuário do sistema.

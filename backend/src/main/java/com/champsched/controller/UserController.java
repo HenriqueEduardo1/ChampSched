@@ -2,6 +2,8 @@ package com.champsched.controller;
 
 import com.champsched.dto.UserRequestDTO;
 import com.champsched.dto.UserResponseDTO;
+import com.champsched.dto.TimeResponseDTO;
+import com.champsched.dto.CampeonatoResponseDTO;
 import com.champsched.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -51,6 +53,20 @@ public class UserController {
         userService.deleteUser(id);
         
         return ResponseEntity.noContent().build();
+    }
+    
+    @GetMapping("/{id}/times")
+    public ResponseEntity<List<TimeResponseDTO>> getUserTimes(@PathVariable int id) {
+        List<TimeResponseDTO> times = userService.getUserTimes(id);
+        
+        return ResponseEntity.ok(times);
+    }
+    
+    @GetMapping("/{id}/campeonatos")
+    public ResponseEntity<List<CampeonatoResponseDTO>> getUserCampeonatos(@PathVariable int id) {
+        List<CampeonatoResponseDTO> campeonatos = userService.getUserCampeonatos(id);
+        
+        return ResponseEntity.ok(campeonatos);
     }
     
 }

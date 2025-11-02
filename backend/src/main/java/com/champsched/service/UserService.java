@@ -2,8 +2,12 @@ package com.champsched.service;
 
 import com.champsched.dto.UserRequestDTO;
 import com.champsched.dto.UserResponseDTO;
+import com.champsched.dto.TimeResponseDTO;
+import com.champsched.dto.CampeonatoResponseDTO;
 import com.champsched.model.User;
 import com.champsched.repository.UserRepository;
+import com.champsched.repository.TimeRepository;
+import com.champsched.repository.CampeonatoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +20,8 @@ import java.util.stream.Collectors;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final TimeRepository timeRepository;
+    private final CampeonatoRepository campeonatoRepository;
 
     @Transactional
     public UserResponseDTO createUser(UserRequestDTO request) {
@@ -64,5 +70,25 @@ public class UserService {
         .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + id));
 
         userRepository.delete(user);
+    }
+    
+    public List<TimeResponseDTO> getUserTimes(int userId) {
+        
+        userRepository.findUserById(userId)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + userId));
+        
+        return timeRepository.findByIntegrantesId(userId).stream()
+                .map(TimeResponseDTO::new)
+                .collect(Collectors.toList());
+    }
+    
+    public List<CampeonatoResponseDTO> getUserCampeonatos(int userId) {
+        
+        userRepository.findUserById(userId)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + userId));
+        
+        return campeonatoRepository.findByParticipanteId(userId).stream()
+                .map(CampeonatoResponseDTO::new)
+                .collect(Collectors.toList());
     }
 }
