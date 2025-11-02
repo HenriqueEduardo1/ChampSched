@@ -15,4 +15,6 @@ public interface CampeonatoRepository extends JpaRepository<Campeonato, Integer>
     @Query("SELECT DISTINCT c FROM Campeonato c JOIN c.times t JOIN t.integrantes i WHERE i.id = :userId")
     List<Campeonato> findByParticipanteId(@Param("userId") int userId);
     
+    List<Campeonato> findByOrganizadorId(int organizadorId);
+    
 }

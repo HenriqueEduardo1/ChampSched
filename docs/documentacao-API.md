@@ -26,7 +26,8 @@ Gerenciamento de usuários do sistema. Usuários podem ser participantes de time
 | GET | `/api/users` | Listar todos os usuários |
 | GET | `/api/users/{id}` | Buscar usuário por ID |
 | GET | `/api/users/{id}/times` | Listar times do usuário |
-| GET | `/api/users/{id}/campeonatos` | Listar campeonatos do usuário |
+| GET | `/api/users/{id}/campeonatos` | Listar campeonatos do usuário (participante) |
+| GET | `/api/users/{id}/campeonatos-organizados` | Listar campeonatos organizados pelo usuário |
 | PUT | `/api/users/{id}` | Atualizar usuário |
 | DELETE | `/api/users/{id}` | Deletar usuário |
 
@@ -170,7 +171,48 @@ Retorna todos os campeonatos que o usuário está participando (através dos tim
 
 ---
 
-### 6. Atualizar Usuário
+### 6. Listar Campeonatos Organizados pelo Usuário
+**GET** `/api/users/{id}/campeonatos-organizados`
+
+Retorna todos os campeonatos que o usuário está organizando.
+
+**Parâmetros:**
+- `id` (path): ID do usuário
+
+**Response:** `200 OK`
+```json
+[
+    {
+        "id": 1,
+        "nome": "Copa ChampSched 2025",
+        "esporte": "Futebol",
+        "data": "2025-12-15",
+        "organizador": {
+            "id": 1,
+            "nome": "João Silva",
+            "contato": "joao.silva@email.com"
+        },
+        "times": [
+            {
+                "id": 1,
+                "nome": "Os Vencedores",
+                "contato": "osvencedores@email.com",
+                "integrantesIds": [2, 3]
+            },
+            {
+                "id": 2,
+                "nome": "Campeões FC",
+                "contato": "campeoes@email.com",
+                "integrantesIds": [4, 5]
+            }
+        ]
+    }
+]
+```
+
+---
+
+### 7. Atualizar Usuário
 **PUT** `/api/users/{id}`
 
 Atualiza os dados de um usuário existente.
@@ -197,7 +239,7 @@ Atualiza os dados de um usuário existente.
 
 ---
 
-### 7. Deletar Usuário
+### 8. Deletar Usuário
 **DELETE** `/api/users/{id}`
 
 Remove um usuário do sistema.

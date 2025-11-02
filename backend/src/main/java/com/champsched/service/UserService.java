@@ -91,4 +91,14 @@ public class UserService {
                 .map(CampeonatoResponseDTO::new)
                 .collect(Collectors.toList());
     }
+    
+    public List<CampeonatoResponseDTO> getUserCampeonatosOrganizados(int userId) {
+        
+        userRepository.findUserById(userId)
+            .orElseThrow(() -> new RuntimeException("Usuário não encontrado com ID: " + userId));
+        
+        return campeonatoRepository.findByOrganizadorId(userId).stream()
+                .map(CampeonatoResponseDTO::new)
+                .collect(Collectors.toList());
+    }
 }

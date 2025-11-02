@@ -65,6 +65,13 @@ public class UserController {
     @GetMapping("/{id}/campeonatos")
     public ResponseEntity<List<CampeonatoResponseDTO>> getUserCampeonatos(@PathVariable int id) {
         List<CampeonatoResponseDTO> campeonatos = userService.getUserCampeonatos(id);
+
+        return ResponseEntity.ok(campeonatos);
+    }
+    
+    @GetMapping("/{id}/campeonatos-organizados")
+    public ResponseEntity<List<CampeonatoResponseDTO>> getUserCampeonatosOrganizados(@PathVariable int id) {
+        List<CampeonatoResponseDTO> campeonatos = userService.getUserCampeonatosOrganizados(id);
         
         return ResponseEntity.ok(campeonatos);
     }
