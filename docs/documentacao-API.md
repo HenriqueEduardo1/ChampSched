@@ -23,6 +23,7 @@ Gerenciamento de usuários do sistema. Usuários podem ser participantes de time
 | Método | Endpoint | Descrição |
 |--------|----------|-----------|
 | POST | `/api/users` | Criar novo usuário |
+| GET | `/api/users` | Listar todos os usuários |
 | GET | `/api/users/{id}` | Buscar usuário por ID |
 | PUT | `/api/users/{id}` | Atualizar usuário |
 | DELETE | `/api/users/{id}` | Deletar usuário |
@@ -57,7 +58,30 @@ Cria um novo usuário no sistema.
 
 ---
 
-### 2. Buscar Usuário por ID
+### 2. Listar Todos os Usuários
+**GET** `/api/users`
+
+Retorna uma lista com todos os usuários cadastrados.
+
+**Response:** `200 OK`
+```json
+[
+    {
+        "id": 1,
+        "nome": "João Silva",
+        "contato": "joao.silva@email.com"
+    },
+    {
+        "id": 2,
+        "nome": "Maria Santos",
+        "contato": "maria.santos@email.com"
+    }
+]
+```
+
+---
+
+### 3. Buscar Usuário por ID
 **GET** `/api/users/{id}`
 
 Retorna os dados de um usuário específico.
@@ -76,7 +100,7 @@ Retorna os dados de um usuário específico.
 
 ---
 
-### 3. Atualizar Usuário
+### 4. Atualizar Usuário
 **PUT** `/api/users/{id}`
 
 Atualiza os dados de um usuário existente.
@@ -103,7 +127,7 @@ Atualiza os dados de um usuário existente.
 
 ---
 
-### 4. Deletar Usuário
+### 5. Deletar Usuário
 **DELETE** `/api/users/{id}`
 
 Remove um usuário do sistema.
