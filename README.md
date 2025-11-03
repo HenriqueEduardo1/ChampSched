@@ -75,6 +75,10 @@ ChampSched/
 
 Uma demonstração do sistema com frontend e backend funcionais está disponível [aqui](https://champ-sched-front.vercel.app/), a interface gráfica está neste [repositório](https://github.com/HenriqueEduardo1/ChampSched-Front).
 
+#### Login
+Usuário: `admin`  
+Senha: `123`
+
 ## Licença
 
 Este projeto está licenciado sob a **Licença MIT**. Veja o arquivo `LICENSE` para mais detalhes.
