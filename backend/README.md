@@ -60,10 +60,10 @@ O projeto usa PostgreSQL como banco de dados.
 Crie um arquivo `.env` na raiz do projeto backend:
 
 ```bash
-DB_URL=jdbc:postgresql://seu-host.com:5432/seu_banco
-DB_USERNAME=seu_usuario
-DB_PASSWORD=sua_senha
-SERVER_PORT=8080
+SPRING_DATASOURCE_URL=jdbc:postgresql://seu-host:5432/seu_banco
+SPRING_DATASOURCE_USERNAME=seu_usuario
+SPRING_DATASOURCE_PASSWORD=sua_senha
+PORT=8080
 ```
 
 ## Como executar
