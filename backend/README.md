@@ -1,83 +1,36 @@
 # ChampSched Backend
 
-Sistema de agendamento de campeonatos - Backend Spring Boot
-
-## Tecnologias
-
-- Java 21 (LTS)
-- Spring Boot 3.4.1
-- Spring Web
-- Spring Data JPA
-- Spring Boot DevTools
-- Lombok
-- PostgreSQL
-
-## Estrutura do Projeto
-
-```
-com.champsched
-├── controller    
-├── service       
-├── repository    
-├── model         
-│   ├── User.java           
-│   ├── Time.java           
-│   ├── Campeonato.java     
-│   ├── IParticipante.java  
-│   └── IOrganizador.java  
-├── dto          
-└── config        
-```
-
-## Modelagem de Entidades
-
-### User
-- Implementa `IParticipante` e `IOrganizador`
-- Pode ser integrante de times
-- Pode organizar campeonatos
-
-### Time
-- Possui vários integrantes (Users)
-- Pode participar de vários campeonatos
-
-### Campeonato
-- Possui um organizador (User)
-- Possui vários times participantes
-
-### Relacionamentos
-- User 1:N Campeonato (como organizador)
-- Time N:N User (integrantes)
-- Time N:N Campeonato (participação)
-
-## Banco de Dados PostgreSQL
-
-O projeto usa PostgreSQL como banco de dados. 
+API REST desenvolvida com Spring Boot para gerenciamento de campeonatos esportivos.
 
 
+## Configuração do Ambiente
 
-### Configuração
+### 1. Banco de Dados
 
-Crie um arquivo `.env` na raiz do projeto backend:
+Crie um banco PostgreSQL e configure as credenciais em um arquivo `.env` na raiz do backend:
 
-```bash
-SPRING_DATASOURCE_URL=jdbc:postgresql://seu-host:5432/seu_banco
+```env
+SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/champsched
 SPRING_DATASOURCE_USERNAME=seu_usuario
 SPRING_DATASOURCE_PASSWORD=sua_senha
 PORT=8080
 ```
 
-## Como executar
+### 2. Executar a aplicação
 
+Com Maven Wrapper (recomendado):
 ```bash
 ./mvnw spring-boot:run
 ```
 
-Ou com Maven instalado:
-
+Com Maven instalado:
 ```bash
 mvn spring-boot:run
 ```
 
-## Endpoints
+### Testes
+```bash
+./mvnw test
+```
 
-API disponível em: http://localhost:8080
+---
