@@ -57,27 +57,63 @@ Isso criará uma cópia local do repositório em sua máquina.
 
 ```
 ChampSched/
-├── backend/
-├── LICENSE
-├── README.md
+├── backend/                           
+│   ├── src/main/java/com/champsched/
+│   │   ├── controller/                
+│   │   ├── service/                   
+│   │   ├── repository/                
+│   │   ├── model/                     
+│   │   ├── dto/                       
+│   │   └── config/                    
+│   └── README.md
 ├── docs/
-│   └── relatorio-principios-projeto.md
-└── user_stories.md
+│   ├── padroes-projeto.md             
+│   ├── relatorio-principios-projeto.md 
+│   ├── documentacao-API.md            
+│   └── us/                            
+├── postman/                           
+├── LICENSE
+└── README.md
 ```
-- backend/: MVP funcional feito em Java com SpringBoot e React.
-- LICENSE: termos da licença do projeto (MIT).
-- README.md: este arquivo de apresentação.
-- docs/: documentação adicional do projeto.
-- docs/relatorio-principios-projeto.md: relatório sobre princípios de projeto (SOLID, GRASP, etc.) e aplicação ao ChampSched.
-- user_stories.md: Estórias de usuários para serem implementadas
 
-### MVP
+## Tecnologias Utilizadas
 
-Uma demonstração do sistema com frontend e backend funcionais está disponível [aqui](https://champ-sched-front.vercel.app/), a interface gráfica está neste [repositório](https://github.com/HenriqueEduardo1/ChampSched-Front).
+- **Backend**: Java 21 + Spring Boot 3.4.1
+- **Banco de Dados**: PostgreSQL
+- **ORM**: Spring Data JPA
+- **Build**: Maven
+- **Outras**: Lombok, Spring DevTools
 
-#### Login
-Usuário: `admin`  
-Senha: `123`
+## Funcionalidades Implementadas
+
+### Gerenciamento de Usuários
+- CRUD completo (Create, Read, Update, Delete)
+- Usuários podem ser participantes e organizadores simultaneamente
+
+### Gerenciamento de Times
+- CRUD completo de times esportivos
+- Relacionamento N:N com usuários (integrantes do time)
+- Relacionamento N:N com campeonatos (participação em competições)
+
+### Gerenciamento de Campeonatos
+- CRUD completo com organizador responsável
+- Adição/remoção dinâmica de times participantes
+- Consulta de campeonatos com dados completos (organizador e times)
+
+### API REST
+- Endpoints RESTful completos
+- CORS habilitado para integração com frontend
+- Transações gerenciadas automaticamente
+- Validação e tratamento de erros
+
+## MVP (Demonstração)
+
+Uma demonstração do sistema com frontend e backend funcionais está disponível [aqui](https://champ-sched-front.vercel.app/).  
+Repositório do frontend: [ChampSched-Front](https://github.com/HenriqueEduardo1/ChampSched-Front)
+
+**Credenciais de teste:**
+- Usuário: `admin`  
+- Senha: `123`
 
 ## Licença
 
@@ -85,4 +121,8 @@ Este projeto está licenciado sob a **Licença MIT**. Veja o arquivo `LICENSE` p
 
 ## Documentação
 
-- Relatório de Princípios de Projeto: [docs/relatorio-principios-projeto.md](docs/relatorio-principios-projeto.md)
+- **[Padrões de Projeto GoF](docs/padroes-projeto.md)** - Análise dos padrões de projetos
+- **[Princípios SOLID/GRASP](docs/relatorio-principios-projeto.md)** - Aplicação de princípios de design
+- **[Documentação da API](docs/documentacao-API.md)** - Endpoints e exemplos de uso
+- **[Backend Setup](backend/README.md)** - Configuração e execução do backend
+- **[User Stories](user_stories.md)** - Requisitos e histórias de usuário
