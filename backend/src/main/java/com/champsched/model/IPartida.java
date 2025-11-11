@@ -22,5 +22,6 @@ public interface IPartida {
 
     void finalizar();
 
+    ResultadoPartida getResultado();
     Time getVencedor();
 }

@@ -25,17 +25,27 @@ public class PartidaFutebol extends PartidaBase {
     }
 
     @Override
-    public Time getVencedor() {
+    public ResultadoPartida getResultado() {
         if (getStatus() != StatusPartida.FINALIZADA) {
-            return null;
+            return ResultadoPartida.NAO_FINALIZADA;
         }
-        
+
         if (golsTimeA > golsTimeB) {
-            return getTimeA();
+            return ResultadoPartida.TIME_A_VENCEU;
         } else if (golsTimeB > golsTimeA) {
-            return getTimeB();
+            return ResultadoPartida.TIME_B_VENCEU;
+        } else {
+            return ResultadoPartida.EMPATE;
         }
-        
-        return null;
     }
+
+    @Override
+    public Time getVencedor() {
+        return switch (getResultado()) {
+            case TIME_A_VENCEU -> getTimeA();
+            case TIME_B_VENCEU -> getTimeB();
+            default -> null;
+        };
+    }
+
 }
