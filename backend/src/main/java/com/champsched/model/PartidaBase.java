@@ -21,11 +21,11 @@ public abstract class PartidaBase implements IPartida {
     private Campeonato campeonato;
 
     @ManyToOne
-    @JoinColumn(name = "time_a_id", nullable = false)
+    @JoinColumn(name = "time_a_id")
     private Time timeA;
 
     @ManyToOne
-    @JoinColumn(name = "time_b_id", nullable = false)
+    @JoinColumn(name = "time_b_id")
     private Time timeB;
 
     @Enumerated(EnumType.STRING)
@@ -33,8 +33,19 @@ public abstract class PartidaBase implements IPartida {
 
     private LocalDateTime dataHora;
 
+    @Column
+    private Integer posicaoNaProximaPartida;
+
+    @Column
+    private Integer fase;
+
     @Override
     public List<Time> getTimes() {
-        return List.of(timeA, timeB);
+        return List.of(timeA, timeB).stream()
+                .filter(time -> time != null)
+                .toList();
     }
+    
+    public abstract PartidaBase getProximaPartida();
+    public abstract void setProximaPartida(PartidaBase proximaPartida);
 }
