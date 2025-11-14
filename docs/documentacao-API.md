@@ -4,6 +4,7 @@
 - [Usuários (Users)](#usuários-users)
 - [Times](#times)
 - [Campeonatos](#campeonatos)
+- [Partidas](#partidas)
 
 ---
 
@@ -705,38 +706,176 @@ Adiciona um time a um campeonato existente.
 }
 ```
 
-**Observação:** Se o time já estiver no campeonato, não será adicionado novamente.
+**Observação:** O time não é deletado, apenas removido do campeonato.
 
 ---
 
-### 7. Remover Time do Campeonato
-**DELETE** `/api/campeonatos/{campeonatoId}/times/{timeId}`
+## Partidas
 
-Remove um time de um campeonato.
+Gerenciamento de partidas e chaveamentos de campeonatos. Sistema suporta geração automática de chaveamento em eliminação simples com play-in.
+
+### Endpoints
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/api/partidas/campeonato/{campeonatoId}/gerar-chaveamento` | Gerar chaveamento do campeonato |
+| GET | `/api/partidas/campeonato/{campeonatoId}` | Listar partidas do campeonato |
+| DELETE | `/api/partidas/campeonato/{campeonatoId}` | Apagar todas as partidas do campeonato |
+
+---
+
+### 1. Gerar Chaveamento
+**POST** `/api/partidas/campeonato/{campeonatoId}/gerar-chaveamento`
+
+Gera automaticamente o chaveamento completo do campeonato usando o sistema de eliminação simples com play-in.
 
 **Parâmetros:**
 - `campeonatoId` (path): ID do campeonato
-- `timeId` (path): ID do time
 
-**Response:** `200 OK`
+**Exemplo de Estrutura (5 times):**
+- Fase 1 (Play-in): 1 partida (2 times)
+- Fase 2 (Semifinais): 2 partidas (vencedor play-in + 3 times com bye)
+- Fase 3 (Final): 1 partida
+- **Total: 4 partidas**
+
+**Response:** `201 Created`
 ```json
 {
-    "id": 1,
-    "nome": "Copa ChampSched 2025",
-    "esporte": "Futebol",
-    "data": "2025-12-15",
-    "organizador": {...},
-    "times": [
+    "message": "Chaveamento gerado com sucesso",
+    "totalPartidas": 4,
+    "partidas": [
         {
             "id": 1,
-            "nome": "Os Vencedores",
-            "contato": "osvencedores@email.com",
-            "integrantesIds": [1, 2, 3]
+            "fase": 1,
+            "timeA": "Os Vencedores",
+            "timeB": "Campeões FC",
+            "proximaPartidaId": 2,
+            "posicaoNaProximaPartida": 1
+        },
+        {
+            "id": 2,
+            "fase": 2,
+            "timeA": "Time A",
+            "timeB": "Time B",
+            "proximaPartidaId": 4,
+            "posicaoNaProximaPartida": 1
+        },
+        {
+            "id": 3,
+            "fase": 2,
+            "timeA": "Time C",
+            "timeB": null,
+            "proximaPartidaId": 4,
+            "posicaoNaProximaPartida": 2
+        },
+        {
+            "id": 4,
+            "fase": 3,
+            "timeA": null,
+            "timeB": null,
+            "proximaPartidaId": null,
+            "posicaoNaProximaPartida": null
         }
     ]
 }
 ```
 
-**Observação:** O time não é deletado, apenas removido do campeonato.
+---
+
+### 2. Listar Partidas do Campeonato
+**GET** `/api/partidas/campeonato/{campeonatoId}`
+
+Retorna todas as partidas de um campeonato, ordenadas por fase.
+
+**Parâmetros:**
+- `campeonatoId` (path): ID do campeonato
+
+**Response:** `200 OK`
+```json
+[
+    {
+        "id": 1,
+        "fase": 1,
+        "timeA": "Os Vencedores",
+        "timeB": "Campeões FC",
+        "proximaPartidaId": 2,
+        "posicaoNaProximaPartida": 1
+    },
+    {
+        "id": 2,
+        "fase": 2,
+        "timeA": "Time A",
+        "timeB": "Time B",
+        "proximaPartidaId": 4,
+        "posicaoNaProximaPartida": 1
+    },
+    {
+        "id": 3,
+        "fase": 2,
+        "timeA": "Time C",
+        "timeB": null,
+        "proximaPartidaId": 4,
+        "posicaoNaProximaPartida": 2
+    },
+    {
+        "id": 4,
+        "fase": 3,
+        "timeA": null,
+        "timeB": null,
+        "proximaPartidaId": null,
+        "posicaoNaProximaPartida": null
+    }
+]
+```
+
+**Observações:**
+- Partidas são ordenadas por fase (crescente)
+- Times `null` indicam que ainda não foram definidos (aguardando resultado de partidas anteriores)
+- `proximaPartidaId` null indica que é a partida final
+
+---
+
+### 3. Apagar Partidas do Campeonato
+**DELETE** `/api/partidas/campeonato/{campeonatoId}`
+
+Remove todas as partidas de um campeonato específico.
+
+**Parâmetros:**
+- `campeonatoId` (path): ID do campeonato
+
+**Response:** `200 OK`
+```json
+{
+    "message": "Todas as partidas do campeonato foram apagadas com sucesso"
+}
+```
+
+**Possíveis Erros:**
+
+`404 Not Found` - Campeonato não encontrado:
+```json
+{
+    "error": "Campeonato não encontrado"
+}
+```
+
+`400 Bad Request` - Sem partidas para apagar:
+```json
+{
+    "error": "Não há partidas para apagar neste campeonato"
+}
+```
+
+`500 Internal Server Error` - Erro no processamento:
+```json
+{
+    "error": "Erro ao apagar partidas: [mensagem de erro]"
+}
+```
+
+**Observações:**
+- Apenas as partidas são deletadas, o campeonato e os times permanecem intactos
+- Após deletar, é possível gerar um novo chaveamento com `POST /gerar-chaveamento`
+- Esta operação é irreversível
 
 ---
