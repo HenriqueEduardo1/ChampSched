@@ -40,10 +40,30 @@ public class PartidaController {
         }
     }
 
-        @GetMapping("/campeonato/{campeonatoId}")
+    @GetMapping("/campeonato/{campeonatoId}")
     public ResponseEntity<List<PartidaDTO>> listarPartidas(@PathVariable Integer campeonatoId) {
         List<PartidaDTO> partidas = partidaService.listarPartidas(campeonatoId);
         
         return ResponseEntity.ok(partidas);
+    }
+    
+    @DeleteMapping("/campeonato/{campeonatoId}")
+    public ResponseEntity<?> apagarPartidas(@PathVariable Integer campeonatoId) {
+        try {
+            partidaService.apagarPartidasDoCampeonato(campeonatoId);
+            
+            return ResponseEntity.ok(Map.of(
+                "message", "Todas as partidas do campeonato foram apagadas com sucesso"
+            ));
+            
+        } catch (IllegalStateException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Erro ao apagar partidas: " + e.getMessage()));
+        }
     }
 }

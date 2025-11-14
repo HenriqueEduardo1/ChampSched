@@ -53,6 +53,21 @@ public class PartidaService {
         return partidas.stream().map(PartidaDTO::new).toList();
     }
 
+    @Transactional
+    public void apagarPartidasDoCampeonato(Integer campeonatoId) {
+    
+        campeonatoRepository.findById(campeonatoId)
+                .orElseThrow(() -> new RuntimeException("Campeonato não encontrado"));
+        
+        long totalPartidas = partidaRepository.countByCampeonatoId(campeonatoId);
+        
+        if (totalPartidas == 0) {
+            throw new IllegalStateException("Não há partidas para apagar neste campeonato");
+        }
+        
+        partidaRepository.deleteByCampeonatoId(campeonatoId);
+    }
+    
     private void validarCampeonato(Campeonato campeonato) {
     
         if (campeonato.getTimes().size() < 2) {

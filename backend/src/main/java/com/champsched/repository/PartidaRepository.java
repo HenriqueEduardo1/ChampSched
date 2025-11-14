@@ -26,4 +26,6 @@ public interface PartidaRepository extends JpaRepository<PartidaFutebol, Integer
         @Param("campeonatoId") Integer campeonatoId, 
         @Param("timeId") Integer timeId
     );
+    
+    void deleteByCampeonatoId(Integer campeonatoId);
 }
