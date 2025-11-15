@@ -13,17 +13,18 @@ public class ChaveamentoEliminacaoSimples implements IChaveamento {
     @Override
     public List<IPartida> gerarPartidasIniciais(Campeonato campeonato) {
         List<Time> times = prepararTimes(campeonato);
-        
-        int numTimes = times.size();
-        int proximaPotenciaDe2 = calcularProximaPotenciaDe2(numTimes);
-        int partidasPlayIn = calcularPartidasPlayIn(numTimes, proximaPotenciaDe2);
-        int timesNaPrimeiraFasePrincipal = partidasPlayIn > 0 ? proximaPotenciaDe2 / 2 : proximaPotenciaDe2;
-        
-        List<List<PartidaBase>> fases = criarEstruturaDeFases(campeonato, timesNaPrimeiraFasePrincipal, partidasPlayIn);
 
-        conectarFases(fases);
-        distribuirTimes(times, fases, partidasPlayIn);
-        
+        int numTimes = times.size();
+        int potenciaBase = calcularMaiorPotenciaDe2MenorOuIgual(numTimes);
+        int partidasPlayIn = numTimes > potenciaBase ? (numTimes - potenciaBase) : 0;
+        int timesComBye = partidasPlayIn > 0 ? (2 * potenciaBase - numTimes) : potenciaBase;
+        int partidasPrimeiraFasePrincipal = potenciaBase / 2;
+
+        List<List<PartidaBase>> fases = criarEstruturaDeFases(campeonato, partidasPrimeiraFasePrincipal, partidasPlayIn);
+
+        conectarFases(fases, partidasPlayIn);
+        distribuirTimes(times, fases, partidasPlayIn, timesComBye);
+
         return converterParaListaDePartidas(fases);
     }
     
@@ -38,33 +39,24 @@ public class ChaveamentoEliminacaoSimples implements IChaveamento {
         return times;
     }
     
-    private int calcularProximaPotenciaDe2(int numTimes) {
-        int proximaPotenciaDe2 = 1;
+    private int calcularMaiorPotenciaDe2MenorOuIgual(int numTimes) {
+        int potencia = 1;
 
-        while (proximaPotenciaDe2 < numTimes) {
-            proximaPotenciaDe2 *= 2;
+        while (potencia * 2 <= numTimes) {
+            potencia *= 2;
         }
 
-        return proximaPotenciaDe2;
+        return potencia;
     }
     
-    private int calcularPartidasPlayIn(int numTimes, int proximaPotenciaDe2) {
-        int timesComBye = proximaPotenciaDe2 - numTimes;
-        int timesNoPlayIn = numTimes - timesComBye;
-        
-        return timesNoPlayIn / 2;
-    }
-    
-    private List<List<PartidaBase>> criarEstruturaDeFases(Campeonato campeonato, int timesNaPrimeiraFasePrincipal, int partidasPlayIn) {
+    private List<List<PartidaBase>> criarEstruturaDeFases(Campeonato campeonato, int partidasPrimeiraFasePrincipal, int partidasPlayIn) {
         List<List<PartidaBase>> fases = new ArrayList<>();
         
         if (partidasPlayIn > 0) {
             fases.add(criarFasePlayIn(campeonato, partidasPlayIn));
         }
         
-        int partidasNaPrimeiraFasePrincipal = timesNaPrimeiraFasePrincipal / 2;
-        
-        fases.addAll(criarFasesPrincipais(campeonato, partidasNaPrimeiraFasePrincipal, partidasPlayIn > 0));
+        fases.addAll(criarFasesPrincipais(campeonato, partidasPrimeiraFasePrincipal, partidasPlayIn > 0));
         
         return fases;
     }
@@ -74,8 +66,8 @@ public class ChaveamentoEliminacaoSimples implements IChaveamento {
         
         for (int i = 0; i < partidasPlayIn; i++) {
             PartidaBase partida = (PartidaBase) criarPartida(campeonato, null, null);
+            partida.setFase(0);
 
-            partida.setFase(1);
             fasePlayIn.add(partida);
         }
         
@@ -85,7 +77,7 @@ public class ChaveamentoEliminacaoSimples implements IChaveamento {
     private List<List<PartidaBase>> criarFasesPrincipais(Campeonato campeonato, int partidasIniciais, boolean temPlayIn) {
         List<List<PartidaBase>> fases = new ArrayList<>();
 
-        int numeroFase = temPlayIn ? 2 : 1;
+        int numeroFase = 1;
         int numPartidas = partidasIniciais;
         
         while (numPartidas >= 1) {
@@ -106,15 +98,32 @@ public class ChaveamentoEliminacaoSimples implements IChaveamento {
         return fases;
     }
     
-    private void conectarFases(List<List<PartidaBase>> fases) {
+    private void conectarFases(List<List<PartidaBase>> fases, int partidasPlayIn) {
         for (int fase = 0; fase < fases.size() - 1; fase++) {
             List<PartidaBase> faseAtual = fases.get(fase);
             List<PartidaBase> proximaFase = fases.get(fase + 1);
-            
+
+            if (fase == 0 && partidasPlayIn > 0) {
+                int totalPartidasFase1 = proximaFase.size();
+                int inicioReservado = totalPartidasFase1 - partidasPlayIn;
+
+                for (int i = 0; i < faseAtual.size(); i++) {
+                    PartidaBase partidaPlayIn = faseAtual.get(i);
+                    int indiceProximaPartida = inicioReservado + i;
+
+                    if (indiceProximaPartida < proximaFase.size()) {
+                        partidaPlayIn.setProximaPartida(proximaFase.get(indiceProximaPartida));
+                        partidaPlayIn.setPosicaoNaProximaPartida(2);
+                    }
+                }
+
+                continue; 
+            }
+
             for (int i = 0; i < faseAtual.size(); i++) {
                 PartidaBase partida = faseAtual.get(i);
                 int indiceProximaPartida = i / 2;
-                
+
                 if (indiceProximaPartida < proximaFase.size()) {
                     partida.setProximaPartida(proximaFase.get(indiceProximaPartida));
                     partida.setPosicaoNaProximaPartida((i % 2) + 1);
@@ -123,13 +132,13 @@ public class ChaveamentoEliminacaoSimples implements IChaveamento {
         }
     }
     
-    private void distribuirTimes(List<Time> times, List<List<PartidaBase>> fases, int partidasPlayIn) {
+    private void distribuirTimes(List<Time> times, List<List<PartidaBase>> fases, int partidasPlayIn, int timesComBye) {
         int indiceTime = 0;
-        
+
         if (partidasPlayIn > 0) {
             indiceTime = distribuirTimesNoPlayIn(times, fases.get(0), partidasPlayIn);
         }
-        
+
         distribuirTimesComBye(times, fases, partidasPlayIn, indiceTime);
     }
     
@@ -145,24 +154,30 @@ public class ChaveamentoEliminacaoSimples implements IChaveamento {
         return indiceTime;
     }
     
-    private void distribuirTimesComBye(List<Time> times, List<List<PartidaBase>> fases, 
-                                        int partidasPlayIn, int indiceTimeInicial) {
+    private void distribuirTimesComBye(List<Time> times, List<List<PartidaBase>> fases, int partidasPlayIn, int indiceTimeInicial) {
+
         List<PartidaBase> faseAposPlayIn = partidasPlayIn > 0 ? fases.get(1) : fases.get(0);
         int indiceTime = indiceTimeInicial;
-        int indicePartida = 0;
-        
-        while (indiceTime < times.size() && indicePartida < faseAposPlayIn.size()) {
-            PartidaBase partida = faseAposPlayIn.get(indicePartida);
-            
-            if (partida.getTimeA() == null && partida.getTimeB() == null) {
-                partida.setTimeA(times.get(indiceTime++));
-                
-                if (indiceTime < times.size()) {
+        int totalPartidasFase1 = faseAposPlayIn.size();
+
+        int inicioReservado = partidasPlayIn > 0 ? (totalPartidasFase1 - partidasPlayIn) : totalPartidasFase1;
+
+        for (int i = 0; i < totalPartidasFase1 && indiceTime < times.size(); i++) {
+            PartidaBase partida = faseAposPlayIn.get(i);
+
+            if (i < inicioReservado) {
+                if (partida.getTimeA() == null) {
+                    partida.setTimeA(times.get(indiceTime++));
+                }
+
+                if (indiceTime < times.size() && partida.getTimeB() == null) {
                     partida.setTimeB(times.get(indiceTime++));
                 }
+            } else {
+                if (partida.getTimeA() == null) {
+                    partida.setTimeA(times.get(indiceTime++));
+                }
             }
-            
-            indicePartida++;
         }
     }
     
