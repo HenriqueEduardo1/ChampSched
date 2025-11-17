@@ -4,6 +4,7 @@
 - [Usuários (Users)](#usuários-users)
 - [Times](#times)
 - [Campeonatos](#campeonatos)
+- [Partidas](#partidas)
 
 ---
 
@@ -705,38 +706,186 @@ Adiciona um time a um campeonato existente.
 }
 ```
 
-**Observação:** Se o time já estiver no campeonato, não será adicionado novamente.
+**Observação:** O time não é deletado, apenas removido do campeonato.
 
 ---
 
-### 7. Remover Time do Campeonato
-**DELETE** `/api/campeonatos/{campeonatoId}/times/{timeId}`
+## Partidas
 
-Remove um time de um campeonato.
+Gerenciamento de partidas e chaveamentos de campeonatos. Sistema suporta geração automática de chaveamento em eliminação simples com play-in.
+
+### Endpoints
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| POST | `/api/partidas/campeonato/{campeonatoId}/gerar-chaveamento` | Gerar chaveamento do campeonato |
+| GET | `/api/partidas/campeonato/{campeonatoId}` | Listar partidas do campeonato |
+| DELETE | `/api/partidas/campeonato/{campeonatoId}` | Apagar todas as partidas do campeonato |
+
+---
+
+### 1. Gerar Chaveamento
+**POST** `/api/partidas/campeonato/{campeonatoId}/gerar-chaveamento`
+
+Gera automaticamente o chaveamento completo do campeonato usando o sistema de eliminação simples com play-in.
 
 **Parâmetros:**
 - `campeonatoId` (path): ID do campeonato
-- `timeId` (path): ID do time
 
-**Response:** `200 OK`
+**Regras e fases:**
+- O sistema calcula P (maior potência de 2 <= N) e, quando N > P, gera partidas de play-in para definir os classificados restantes.
+- O play-in é sempre representado por `fase = 0`.
+- As fases principais do chaveamento começam em `fase = 1` e seguem até a final.
+
+**Exemplo (5 times):**
+- Fase 0 (Play-in): 1 partida (2 times)
+- Fase 1 (Semifinais): 2 partidas (vencedor do play-in ocupa o slot B da partida reservada + 3 times com bye)
+- Fase 2 (Final): 1 partida
+- Total: 4 partidas
+
+**Response:** `201 Created`
 ```json
 {
-    "id": 1,
-    "nome": "Copa ChampSched 2025",
-    "esporte": "Futebol",
-    "data": "2025-12-15",
-    "organizador": {...},
-    "times": [
+    "message": "Chaveamento gerado com sucesso",
+    "totalPartidas": 4,
+    "partidas": [
         {
-            "id": 1,
-            "nome": "Os Vencedores",
-            "contato": "osvencedores@email.com",
-            "integrantesIds": [1, 2, 3]
+            "id": 22,
+            "fase": 0,
+            "timeA": "Team 3",
+            "timeB": "Team 1",
+            "proximaPartidaId": 24,
+            "posicaoNaProximaPartida": 2
+        },
+        {
+            "id": 23,
+            "fase": 1,
+            "timeA": "Team 2",
+            "timeB": "Team 5",
+            "proximaPartidaId": 25,
+            "posicaoNaProximaPartida": 1
+        },
+        {
+            "id": 24,
+            "fase": 1,
+            "timeA": "Team 4",
+            "timeB": null,
+            "proximaPartidaId": 25,
+            "posicaoNaProximaPartida": 2
+        },
+        {
+            "id": 25,
+            "fase": 2,
+            "timeA": null,
+            "timeB": null,
+            "proximaPartidaId": null,
+            "posicaoNaProximaPartida": null
         }
     ]
 }
 ```
 
-**Observação:** O time não é deletado, apenas removido do campeonato.
+**Observações importantes:**
+- `fase = 0` indica partidas de play-in.
+- Nas partidas reservadas da fase 1, o time direto ocupa `timeA` e o vencedor do play-in preenche `timeB` (posicaoNaProximaPartida = 2 do jogo de play-in).
+- Nenhum time joga mais de uma vez por fase.
+
+---
+
+### 2. Listar Partidas do Campeonato
+**GET** `/api/partidas/campeonato/{campeonatoId}`
+
+Retorna todas as partidas de um campeonato, ordenadas por fase (incluindo `fase = 0` para play-in quando existir).
+
+**Parâmetros:**
+- `campeonatoId` (path): ID do campeonato
+
+**Response:** `200 OK`
+```json
+[
+    {
+        "id": 22,
+        "fase": 0,
+        "timeA": "Team 3",
+        "timeB": "Team 1",
+        "proximaPartidaId": 24,
+        "posicaoNaProximaPartida": 2
+    },
+    {
+        "id": 23,
+        "fase": 1,
+        "timeA": "Team 2",
+        "timeB": "Team 5",
+        "proximaPartidaId": 25,
+        "posicaoNaProximaPartida": 1
+    },
+    {
+        "id": 24,
+        "fase": 1,
+        "timeA": "Team 4",
+        "timeB": null,
+        "proximaPartidaId": 25,
+        "posicaoNaProximaPartida": 2
+    },
+    {
+        "id": 25,
+        "fase": 2,
+        "timeA": null,
+        "timeB": null,
+        "proximaPartidaId": null,
+        "posicaoNaProximaPartida": null
+    }
+]
+```
+
+**Observações:**
+- Partidas são ordenadas por fase (crescente), portanto o play-in (`fase = 0`) aparece primeiro quando existir
+- Times `null` indicam que ainda não foram definidos (aguardando resultado de partidas anteriores)
+- `proximaPartidaId` null indica que é a partida final
+
+---
+
+### 3. Apagar Partidas do Campeonato
+**DELETE** `/api/partidas/campeonato/{campeonatoId}`
+
+Remove todas as partidas de um campeonato específico.
+
+**Parâmetros:**
+- `campeonatoId` (path): ID do campeonato
+
+**Response:** `200 OK`
+```json
+{
+    "message": "Todas as partidas do campeonato foram apagadas com sucesso"
+}
+```
+
+**Possíveis Erros:**
+
+`404 Not Found` - Campeonato não encontrado:
+```json
+{
+    "error": "Campeonato não encontrado"
+}
+```
+
+`400 Bad Request` - Sem partidas para apagar:
+```json
+{
+    "error": "Não há partidas para apagar neste campeonato"
+}
+```
+
+`500 Internal Server Error` - Erro no processamento:
+```json
+{
+    "error": "Erro ao apagar partidas: [mensagem de erro]"
+}
+```
+
+**Observações:**
+- Apenas as partidas são deletadas, o campeonato e os times permanecem intactos
+- Após deletar, é possível gerar um novo chaveamento com `POST /gerar-chaveamento`
+- Esta operação é irreversível
 
 ---
