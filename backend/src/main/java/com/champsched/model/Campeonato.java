@@ -34,6 +34,9 @@ public class Campeonato {
     @ManyToMany(mappedBy = "campeonatos")
     private List<Time> times = new ArrayList<>();
     
+    @OneToMany(mappedBy = "campeonato")
+    private List<PartidaBase> partidas = new ArrayList<>();
+    
     public Campeonato(String nome, String esporte, LocalDate data, User organizador) {
         this.nome = nome;
         this.esporte = esporte;
